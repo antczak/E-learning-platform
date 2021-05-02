@@ -1,0 +1,58 @@
+﻿@model E_learning_platform.Models.TestDetailsViewModel
+
+@{
+    ViewBag.Title = Model.Name;
+}
+
+<h2>Test</h2>
+
+<div class="dropdown">
+    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        Opcje administratora
+        <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
+        <li>@Html.ActionLink("Przeglądaj wyniki", "Edit", "Test", new { id = Model.Id }, null)</li>
+    </ul>
+</div>
+<br />
+
+<div>
+    <h4>Informacje</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+    </dl>
+    @using (Html.BeginForm("Solve", "Test", FormMethod.Post, null))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.Id)
+        <div class="form-actions no-color">
+            <input type="submit" value="Rozpocznij test" class="btn btn-default" />
+        </div>
+    }
+    <br />
+</div>
+<div class="list-group">
+    <div class="list-group-item active">
+        <h4 class="list-group-item-heading">Moje wyniki</h4>
+    </div>
+    @foreach (var element in Model.Results)
+    {
+        <a href="@Url.Action("Result", "Test", new { id = element.Id }, null)" class="list-group-item">
+            <h4 class="list-group-item-heading">
+                @element.Score/@element.QuestionAnswers.Count (@element.Date)
+            </h4>
+        </a>
+    }
+</div>
+
+<p>
+    @Html.ActionLink("Wróć", "View", "Course", new { id = Model.CourseId }, null)
+</p>

@@ -1,0 +1,20 @@
+﻿@model E_learning_platform.Models.RoleIndexViewModel
+
+@{
+    ViewBag.Title = "Role";
+}
+
+<h2>Role</h2>
+
+
+<div class="list-group">
+    <a href="#" class="list-group-item active">
+        <h4 class="list-group-item-heading">Nazwa</h4>
+    </a>
+@foreach (var item in Model.RoleList)
+{
+    <a href="@Url.Action("Details", new { id = @item.Id })" class="list-group-item">
+        <h4 class="list-group-item-heading">@Html.DisplayFor(m => item.Name)</h4>
+    </a>
+}
+

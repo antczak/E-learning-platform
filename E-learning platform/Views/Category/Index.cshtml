@@ -1,0 +1,29 @@
+﻿@model E_learning_platform.Models.CourseIndexViewModel
+@{
+    ViewBag.Title = "Kategorie kursów";
+}
+@if (ViewBag.isAdmin == true)
+{
+    <div class="dropdown">
+        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            Opcje administratora
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
+            <li>@Html.ActionLink("Dodaj kategorię", "Add")</li>
+        </ul>
+    </div>
+    <br />
+}
+<div class="list-group">
+    <a href="#" class="list-group-item active">
+        <h4 class="list-group-item-heading">Kategorie kursów</h4>
+    </a>
+    @foreach (var item in Model.CategoryList)
+    {
+        <a href="@Url.Action("View", new {id = item.Id})" class="list-group-item">
+            <h4 class="list-group-item-heading">@Html.DisplayFor(m => item.Name)</h4>
+            <p class="list-group-item-text">@Html.DisplayFor(m => item.Desc)</p>
+        </a>
+    }
+</div>

@@ -1,0 +1,19 @@
+﻿@model E_learning_platform.Models.VideoDetailsViewModel
+
+@{
+    ViewBag.Title = Model.Name;
+}
+
+<h2>@Model.Name</h2>
+
+<div>
+    <div class="embed-responsive embed-responsive-16by9">
+        <video width="860" height="480" controls>
+            <source src="@Model.Path">
+            Twoja przeglądarka nie obsługuje filmów wideo
+        </video>
+    </div>
+</div>
+<p>
+    @Html.ActionLink("Wróć", "View", "Course", new { id = Model.CourseId }, null)
+</p>

@@ -1,0 +1,40 @@
+﻿@model E_learning_platform.Models.CategoryDeleteViewModel
+
+@{
+    ViewBag.Title = "Usuń kategorię";
+}
+
+<h2>Kategoria</h2>
+
+<h3>Usuń</h3>
+<div>
+    <h4>Czy na pewno chcesz usunąć tę kategorię?</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Desc)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Desc)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm("Delete", "Category", new {id = Model.Id})) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Usuń" class="btn btn-default" /> |
+            @Html.ActionLink("Wróć", "View", new { id = Model.Id })
+        </div>
+    }
+</div>

@@ -1,0 +1,46 @@
+﻿@model E_learning_platform.Models.TestSolveViewModel
+
+@{
+    ViewBag.Title = "Test";
+    var AnswerNum = 0;
+}
+
+<h2>Test</h2>
+
+<div>
+    <h4>@Model.Name</h4>
+    <hr />
+    @using (Html.BeginForm("Check", "Test"))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.GeneratedId)
+        foreach (var question in Model.Questions)
+        {
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">@question.Text</h3>
+                </div>
+                <div class="panel-body">
+                    @foreach (var answer in question.Answers)
+                    {
+                        <div class="row">
+                            <span class="col-md-11">@answer.Text</span>
+                            <div class="col-md-1">
+                                <input type="hidden" name="UserAnswers[@AnswerNum].Key" value="@answer.Id" />
+                                <input class="form-control check-box" type="checkbox" name="UserAnswers[@AnswerNum].Value" value="true" />
+                                <input type="hidden" name="UserAnswers[@AnswerNum].Value" value="false" />
+                            </div>
+                        </div>
+                        AnswerNum++;
+                    }
+                </div>
+            </div>
+        }
+        <div class="form-group">
+                <input type="submit" value="Wyślij" class="btn btn-default" />
+        </div>
+    }
+</div>
+<p>
+    @Html.ActionLink("Wróć", "View", "Course", new { id = Model.CourseId }, null)
+</p>

@@ -1,0 +1,30 @@
+﻿@model E_learning_platform.Models.RoleDetailsViewModel
+
+@{
+    ViewBag.Title = "Informacje o roli";
+}
+
+<h2>@Html.DisplayNameFor(model => model.Name): @Html.DisplayFor(model => model.Name)</h2>
+<div class="dropdown">
+    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        Opcje administratora
+        <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
+        <li>@Html.ActionLink("Przypisz użytkownika do tej roli", "Assign", new { id = Model.Id })</li>
+    </ul>
+</div>
+<br />
+<div class="list-group">
+    <div class="list-group-item active">
+        <h4 class="list-group-item-heading">Użytkownicy</h4>
+    </div>
+    @foreach (var item in Model.UserList)
+    {
+        <div class="list-group-item">
+            <h4 class="list-group-item-heading">@Html.ActionLink(item.Email, "Details", "Profile", new { id = Model.Id }, null)</h4>
+            <p>@Html.ActionLink("Usuń", "Delete", new { id = Model.Id, uid = item.Id })</p>
+        </div>
+    }
+</div>
+@Html.ActionLink("Wróć", "Index")

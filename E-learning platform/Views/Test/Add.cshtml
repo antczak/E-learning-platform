@@ -1,0 +1,99 @@
+﻿@model E_learning_platform.Models.TestAddViewModel
+
+@{
+    ViewBag.Title = "Dodaj test";
+    string c;
+    if (Model.Questions == null)
+    {
+        Model.Questions = new List<E_learning_platform.Models.QuestionAddViewModel>();
+    }
+}
+@Scripts.Render("~/bundles/testeditor")
+<h2>Test</h2>
+
+@using (Html.BeginForm("Add", "Test", new { id = Model.CourseId }, FormMethod.Post, htmlAttributes: new { id = "test-form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.CourseId)
+    <div class="form-horizontal">
+        <h4>Dodaj</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.QuestionLimit, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.QuestionLimit, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.QuestionLimit, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div id="Questions">
+            @foreach (var q in Model.Questions ?? new List<E_learning_platform.Models.QuestionAddViewModel>())
+            {
+                <div class="QuestionPanel panel panel-default">
+                    <div class="panel-heading">
+                        <span class="panel-title">Pytanie: <input class="form-control questionfield" type="text" value="@q.Text" /></span>
+                    </div>
+                    <div class="panel-body">
+                        <div class="Answers">
+                            @foreach (var a in q.Answers ?? new List<E_learning_platform.Models.AnswerAddViewModel>())
+                            {
+                                if (a.IsCorrect)
+                                {
+                                    c = "checked=\"checked\"";
+                                }
+                                else
+                                {
+                                    c = "";
+                                }
+                                <div class="form-group">
+                                    <label class="control-label col-md-2">Odpowiedź</label>
+                                    <div class="col-md-4">
+                                        <input class="form-control" type="text" value="@a.Text" />
+                                    </div>
+                                    <label class="control-label col-md-2">Poprawna?</label>
+                                    <div class="col-md-2">
+                                        <input class="form-control check-box" type="checkbox" value="True" @c />
+
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="button" value="Usuń odpowiedź" class="btn btn-default RemoveAnswer" />
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <input type="button" value="Dodaj odpowiedź" class="btn btn-default AddAnswer" />
+                        <input type="button" value="Usuń pytanie" class="btn btn-default RemoveQuestion" />
+                    </div>
+                </div>
+            }
+        </div>
+
+        @Html.ValidationMessageFor(model => model.Questions, "", new { @class = "text-danger" })
+        <div class="form-group">
+            <div class="col-md-10">
+                <input type="button" id="AddQuestion" value="Dodaj pytanie" class="btn btn-default" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-10">
+                <input type="submit" value="Dodaj test" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Wróć", "View", "Course", new { id = Model.CourseId }, null)
+</div>

@@ -1,0 +1,48 @@
+﻿@model E_learning_platform.Models.CourseShortDetailsViewModel
+
+@{
+    ViewBag.Title = "Buy";
+}
+@if (Model.canBuy)
+{
+<h2>Kup</h2>
+
+<div>
+    <h4>Czy na pewno chcesz kupić ten kurs?</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Price)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Price)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @using (Html.BeginForm("BuyConfirmed", "Course", new { id = Model.Id }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Kup" class="btn btn-default" /> |
+            @Html.ActionLink("Wróć", "View", new { id = Model.Id })
+        </div>
+    }
+</p>
+}
+else
+{
+    <div class="alert alert-warning" role="alert">Nie posiadasz wystarczających środków na zakup tego kursu</div>
+    @Html.ActionLink("Wróć", "View", new { id = Model.Id })
+}

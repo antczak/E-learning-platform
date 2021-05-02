@@ -1,0 +1,46 @@
+﻿@model E_learning_platform.Models.CategoryViewModel
+@{
+    ViewBag.Title = "Kursy";
+}
+
+<h2>@Model.Name</h2>
+@if (ViewBag.isAdmin == true)
+{
+    <div class="dropdown">
+        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            Opcje administratora
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
+            <li>@Html.ActionLink("Dodaj kurs", "Add", "Course", new { id = Model.Id }, null)</li>
+            <li>@Html.ActionLink("Edytuj kategorię", "Edit", new { id = Model.Id })</li>
+            <li>@Html.ActionLink("Usuń kategorię", "Delete", new { id = Model.Id })</li>
+        </ul>
+    </div>
+    <br />
+}
+<div class="row">
+    @foreach (var item in Model.CourseList)
+    {
+        <div class="col-sm-6 col-md-4">
+            <div class="thumbnail">
+                <div style="width: 350px; height: 150px; overflow: hidden;">
+                    @if (item.ImagePath != null)
+                    {
+                        <img src="@Url.Content("~/Content/Uploads/")@item.ImagePath" alt="...">
+                    }
+                    else
+                    {
+                        <img src="http://placehold.it/350x150" alt="...">
+                    }
+                </div>
+                <div class="caption">
+                    <h3>@Html.DisplayFor(m => item.Name)</h3>
+                    <p>@Html.DisplayFor(m => item.Desc)</p>
+                    <p>Cena: @Html.DisplayFor(m => item.Price) zł</p>
+                    <p><a href="@Url.Action("View", "Course", new {id = item.Id})" class="btn btn-primary" role="button">Przejdź</a></p>
+                </div>
+            </div>
+        </div>
+    }
+</div>

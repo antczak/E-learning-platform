@@ -1,0 +1,72 @@
+﻿@model E_learning_platform.Models.TestResultViewModel
+
+@{
+    ViewBag.Title = "Result";
+    var boxchecked = "";
+}
+
+<h2>Test</h2>
+
+<div>
+    <h4>Wynik</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.CourseName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CourseName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Score)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Score)/@Html.DisplayFor(model => model.Max)
+        </dd>
+
+    </dl>
+</div>
+<p>Poprawne odpowiedzi zostały zaznaczone na zielono</p>
+@foreach (var element in Model.UserQuestionAnswers)
+{
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">@element.Question.Text</h3>
+                </div>
+                <div class="panel-body">
+                    @foreach (var answer in element.Question.Answers)
+                    {
+                        boxchecked = "";
+                        if (element.SelectedAnswers.Where(e => e.Id == answer.Id).Any())
+                        {
+                            boxchecked = "checked=\"checked\"";
+                        }
+                        <div class="row">
+                            @if (answer.IsCorrect)
+                            {
+                                <span class="col-md-11" style="color: forestgreen; font-weight: bold;">@answer.Text</span>
+                            }
+                            else
+                            {
+                                <span class="col-md-11">@answer.Text</span>
+                            }
+                            <div class="col-md-1">
+                                <input class="form-control check-box" type="checkbox" value="true" disabled="disabled" @boxchecked />
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+}
+<p>
+    @Html.ActionLink("Wróć", "View", "Course", new { id = Model.CourseId }, null)
+</p>

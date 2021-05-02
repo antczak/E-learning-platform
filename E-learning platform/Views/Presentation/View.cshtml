@@ -1,0 +1,16 @@
+﻿@model E_learning_platform.Models.PresentationDetailsViewModel
+
+@{
+    ViewBag.Title = Model.Name;
+}
+
+<h2>@Model.Name</h2>
+
+<div>
+    <div class="embed-responsive embed-responsive-16by9">
+        <iframe src="~/Content/ViewerJS/#../@Model.Path" width="1026" height="793" frameborder="0"></iframe>
+    </div>
+</div>
+<p>
+    @Html.ActionLink("Wróć", "View", "Course", new { id = Model.CourseId }, null)
+</p>

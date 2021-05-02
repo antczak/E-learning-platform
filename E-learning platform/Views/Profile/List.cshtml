@@ -1,0 +1,21 @@
+﻿@model E_learning_platform.Models.ProfileListViewModel
+@{
+    ViewBag.Title = "Lista uzytkowników";
+}
+
+<h2>Lista użytkowników</h2>
+
+<div class="list-group">
+    <div class="list-group-item active">
+        <h4 class="list-group-item-heading">Lista użytkowników</h4>
+    </div>
+    @foreach (var item in Model.UserList)
+    {
+        <a href="@Url.Action("Details", new {id = item.Id})" class="list-group-item">
+            <h4 class="list-group-item-heading">@Html.DisplayFor(m => item.Email)</h4>
+            <p class="list-group-item-text">@Html.DisplayFor(m => item.Name) @Html.DisplayFor(m => item.LastName)</p>
+        </a>
+    }
+</div>
+
+

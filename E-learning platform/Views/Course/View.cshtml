@@ -1,0 +1,298 @@
+﻿@model E_learning_platform.Models.CourseDetailsViewModel
+
+@{
+    ViewBag.Title = Model.Name;
+}
+<script>
+    $(function () {
+        $(".moveup").click(function () {
+            var element = $(this).closest("a");
+            var prev = element.prev("a");
+            element.insertBefore(prev);
+            return false;
+        });
+
+        $(".movedown").click(function () {
+            var element = $(this).closest("a");
+            var next = element.next("a");
+            element.insertAfter(next);
+            return false;
+        });
+
+        $(".ordersave").click(function () {
+            var tab = $(".tab-content div.tab-pane.active");
+            var tabname = tab.attr("id").slice(0, -3);
+            var listElements = tab.find(".list-group-item").not(".active");
+            var order = 0;
+            var elementsOrder = [];
+            listElements.each(function () {
+                var id = parseInt($(this).attr("id").replace(/[^0-9]*/, ""));
+                elementsOrder[order] = { id: id, order: order };
+                order++;
+            });
+            $.ajax({
+                url: "/Ajax/Order",
+                data : JSON.stringify({ tab: tabname, order: elementsOrder }),
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(data){alert("Zmiany zostały zapisane");},
+                error: function(){alert("Zmiany nie zostały zapisane");}
+            });
+        });
+    });
+</script>
+<h2>@Model.Name</h2>
+@if (ViewBag.isAdmin == true || ViewBag.isModerator == true)
+{
+    <div class="dropdown">
+        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            Opcje administratora
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
+            <li>@Html.ActionLink("Edytuj kurs", "Edit", new { id = Model.Id })</li>
+            <li>@Html.ActionLink("Usuń kurs", "Delete", new { id = Model.Id })</li>
+            <li>@Html.ActionLink("Edytuj informacje", "EditFullDesc", new { id = Model.Id })</li>
+            <li>@Html.ActionLink("Dodaj ogłoszenie", "Add", "Announcement", new { id = Model.Id }, null)</li>
+            <li>@Html.ActionLink("Dodaj prezentację", "Add", "Presentation", new { id = Model.Id }, null)</li>
+            <li>@Html.ActionLink("Dodaj wideo", "Add", "Video", new { id = Model.Id }, null)</li>
+            <li>@Html.ActionLink("Dodaj dokument", "Add", "Document", new { id = Model.Id }, null)</li>
+            <li>@Html.ActionLink("Dodaj test", "Add", "Test", new { id = Model.Id }, null)</li>
+            <li>@Html.ActionLink("Dodaj plik", "Add", "File", new { id = Model.Id }, null)</li>
+            <li>@Html.ActionLink("Dodaj moderatora", "Add", "Moderator", new { id = Model.Id }, null)</li>
+        </ul>
+    </div>
+    <br />
+}
+@if (!Model.hasAccess && ViewBag.isAdmin == false && ViewBag.isModerator == false)
+{
+    <div class="alert alert-warning" role="alert">Nie posiadasz jeszcze tego kursu</div>
+    <p><a href="@Url.Action("Buy", "Course", new {id = Model.Id})" class="btn btn-primary" role="button">Kup ten kurs</a></p>
+}
+<p>
+    
+</p>
+<p>
+    
+</p>
+<div>
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#infotab"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Informacje</a></li>
+        <li><a data-toggle="tab" href="#announcementstab"><i class="fa fa-bullhorn" aria-hidden="true"></i> Ogłoszenia</a></li>
+        <li><a data-toggle="tab" href="#presentationstab"><i class="fa fa-desktop" aria-hidden="true"></i> Prezentacje</a></li>
+        <li><a data-toggle="tab" href="#videostab"><span class="glyphicon glyphicon-film" aria-hidden="true"></span> Wideo</a></li>
+        <li><a data-toggle="tab" href="#documentstab"><span class="fa fa-file-text-o" aria-hidden="true"></span> Dokumenty</a></li>
+        <li><a data-toggle="tab" href="#teststab"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Testy</a></li>
+        <li><a data-toggle="tab" href="#filestab"><span class="glyphicon glyphicon-file" aria-hidden="true"></span> Pliki</a></li>
+        <li><a data-toggle="tab" href="#moderatorstab"><i class="fa fa-users" aria-hidden="true"></i> Moderatorzy</a></li>
+    </ul>
+    <div class="tab-content">
+        <div id="infotab" class="tab-pane fade in active">
+            <br />
+            <div class="list-group">
+                <div class="list-group-item active">
+                    <h4 class="list-group-item-heading">Informacje o kursie</h4>
+                </div>
+                    <div class="list-group-item">
+                        <h4 class="list-group-item-heading">@Html.Raw(Model.FullDesc)</h4>
+                    </div>
+            </div>
+        </div>
+        <div id="announcementstab" class="tab-pane fade">
+                @foreach (var item in Model.Announcements)
+                {
+                    <br />
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">@Html.DisplayFor(m => item.Title)</h3>
+                        </div>
+                        <div class="panel-body">
+                            @Html.Raw(item.Text)
+                        </div>
+                        <div class="panel-footer">@Html.DisplayFor(m => item.Date)
+                            @if (ViewBag.isAdmin == true || ViewBag.isModerator == true)
+                            {
+                                <span style="float: right; font-size: 16px; letter-spacing: 10px;">
+                                    <i class="fa fa-pencil" aria-hidden="true" onclick="window.location = '@Url.Action("Edit", "Announcement", new { id = item.Id }, null)'; return false;"></i>
+                                    <i class="fa fa-trash" aria-hidden="true" onclick="window.location = '@Url.Action("Delete", "Announcement", new { id = item.Id }, null)'; return false;"></i>
+                                </span>
+                            }
+                        </div>
+                    </div>
+                }
+        </div>
+        <div id="presentationstab" class="tab-pane fade">
+            <br />
+            <div class="list-group">
+                <div class="list-group-item active">
+                    <h4 class="list-group-item-heading">Nazwa prezentacji</h4>
+                </div>
+                @foreach (var item in Model.Presentations)
+                {
+                    <a href="@Url.Action("View", "Presentation", new { id = item.Id }, null)" id="presentation@(item.Id)" class="list-group-item">
+                        <h4 class="list-group-item-heading">
+                            @Html.DisplayFor(m => item.Name)
+                            @if (ViewBag.isAdmin == true || ViewBag.isModerator == true)
+                            {
+                                <span style="float: right; font-size: 26px; letter-spacing: 10px;">
+                                    <i class="fa fa-arrow-up moveup" aria-hidden="true"></i>
+                                    <i class="fa fa-arrow-down movedown" aria-hidden="true"></i>
+                                    <i class="fa fa-pencil" aria-hidden="true" onclick="window.location = '@Url.Action("Edit", "Presentation", new { id = item.Id }, null)'; return false;"></i>
+                                    <i class="fa fa-trash" aria-hidden="true" onclick="window.location = '@Url.Action("Delete", "Presentation", new { id = item.Id }, null)'; return false;"></i>
+                                </span>
+                            }
+                        </h4>
+                    </a>
+                }
+            </div>
+            @if (ViewBag.isAdmin == true || ViewBag.isModerator == true)
+            {
+                <button type="button" class="btn btn-default pull-right ordersave">Zapisz kolejność</button>
+                <br style="clear: both;" />
+            }
+        </div>
+        <div id="videostab" class="tab-pane fade">
+            <br />
+            <div class="list-group">
+                <div class="list-group-item active">
+                    <h4 class="list-group-item-heading">Nazwa wideo</h4>
+                </div>
+                @foreach (var item in Model.Videos)
+                {
+                    <a href="@Url.Action("View", "Video", new {id = item.Id}, null)" id="video@(item.Id)" class="list-group-item">
+                        <h4 class="list-group-item-heading">
+                        @Html.DisplayFor(m => item.Name)
+                            @if (ViewBag.isAdmin == true || ViewBag.isModerator == true)
+                            {
+                                <span style="float: right; font-size: 26px; letter-spacing: 10px;">
+                                    <i class="fa fa-arrow-up moveup" aria-hidden="true"></i>
+                                    <i class="fa fa-arrow-down movedown" aria-hidden="true"></i>
+                                    <i class="fa fa-pencil" aria-hidden="true" onclick="window.location = '@Url.Action("Edit", "Video", new { id = item.Id }, null)'; return false;"></i>
+                                    <i class="fa fa-trash" aria-hidden="true" onclick="window.location = '@Url.Action("Delete", "Video", new { id = item.Id }, null)'; return false;"></i>
+                                </span>
+                            }
+                        </h4>
+                    </a>
+                }
+            </div>
+            @if (ViewBag.isAdmin == true || ViewBag.isModerator == true)
+            {
+                <button type="button" class="btn btn-default pull-right ordersave">Zapisz kolejność</button>
+                <br style="clear: both;" />
+            }
+        </div>
+        <div id="teststab" class="tab-pane fade">
+            <br />
+            <div class="list-group">
+                <div class="list-group-item active">
+                    <h4 class="list-group-item-heading">Nazwa testu</h4>
+                </div>
+                @foreach (var item in Model.Tests)
+                {
+                    <a href="@Url.Action("View", "Test", new {id = item.Id}, null)" id="test@(item.Id)" class="list-group-item">
+                        <h4 class="list-group-item-heading">
+                        @Html.DisplayFor(m => item.Name)
+                            @if (ViewBag.isAdmin == true || ViewBag.isModerator == true)
+                            {
+                                <span style="float: right; font-size: 26px; letter-spacing: 10px;">
+                                    <i class="fa fa-arrow-up moveup" aria-hidden="true"></i>
+                                    <i class="fa fa-arrow-down movedown" aria-hidden="true"></i>
+                                    <i class="fa fa-pencil" aria-hidden="true" onclick="window.location = '@Url.Action("Edit", "Test", new { id = item.Id }, null)'; return false;"></i>
+                                    <i class="fa fa-trash" aria-hidden="true" onclick="window.location = '@Url.Action("Delete", "Test", new { id = item.Id }, null)'; return false;"></i>
+                                </span>
+                            }                      
+                        </h4>
+                    </a>
+                }
+            </div>
+            @if (ViewBag.isAdmin == true || ViewBag.isModerator == true)
+            {
+                <button type="button" class="btn btn-default pull-right ordersave">Zapisz kolejność</button>
+                <br style="clear: both;" />
+            }
+        </div>
+        <div id="filestab" class="tab-pane fade">
+            <br />
+            <div class="list-group">
+                <div class="list-group-item active">
+                    <h4 class="list-group-item-heading">Nazwa pliku</h4>
+                </div>
+                @foreach (var item in Model.Files)
+                {
+                    <a href="@Url.Action("Download", "File", new {id = item.Id}, null)" id="file@(item.Id)" class="list-group-item">
+                        <h4 class="list-group-item-heading">
+                        @Html.DisplayFor(m => item.Name)
+                            @if (ViewBag.isAdmin == true || ViewBag.isModerator == true)
+                            {
+                                <span style="float: right; font-size: 26px; letter-spacing: 10px;">
+                                    <i class="fa fa-arrow-up moveup" aria-hidden="true"></i>
+                                    <i class="fa fa-arrow-down movedown" aria-hidden="true"></i>
+                                    <i class="fa fa-pencil" aria-hidden="true" onclick="window.location = '@Url.Action("Edit", "File", new { id = item.Id }, null)'; return false;"></i>
+                                    <i class="fa fa-trash" aria-hidden="true" onclick="window.location = '@Url.Action("Delete", "File", new { id = item.Id }, null)'; return false;"></i>
+                                </span>
+                            }
+                        </h4>
+                    </a>
+                }
+            </div>
+            @if (ViewBag.isAdmin == true || ViewBag.isModerator == true)
+            {
+                <button type="button" class="btn btn-default pull-right ordersave">Zapisz kolejność</button>
+                <br style="clear: both;" />
+            }
+        </div>
+        <div id="documentstab" class="tab-pane fade">
+            <br />
+            <div class="list-group">
+                <div class="list-group-item active">
+                    <h4 class="list-group-item-heading">Nazwa dokumentu</h4>
+                </div>
+                @foreach (var item in Model.Documents)
+                {
+                    <a href="@Url.Action("View", "Document", new {id = item.Id}, null)"id="document@(item.Id)"  class="list-group-item">
+                        <h4 class="list-group-item-heading">
+                            @if (ViewBag.isAdmin == true || ViewBag.isModerator == true)
+                            {
+                                <span style="float: right; font-size: 26px; letter-spacing: 10px;">
+                                    <i class="fa fa-arrow-up moveup" aria-hidden="true"></i>
+                                    <i class="fa fa-arrow-down movedown" aria-hidden="true"></i>
+                                    <i class="fa fa-pencil" aria-hidden="true" onclick="window.location = '@Url.Action("Edit", "Document", new { id = item.Id }, null)'; return false;"></i>
+                                    <i class="fa fa-trash" aria-hidden="true" onclick="window.location = '@Url.Action("Delete", "Document", new { id = item.Id }, null)'; return false;"></i>
+                                </span>
+                            }
+                        @Html.DisplayFor(m => item.Name)
+                        </h4>
+                    </a>
+                }
+            </div>
+            @if (ViewBag.isAdmin == true || ViewBag.isModerator == true)
+            {
+                <button type="button" class="btn btn-default pull-right ordersave">Zapisz kolejność</button>
+                <br style="clear: both;" />
+            }
+        </div>
+        <div id="moderatorstab" class="tab-pane fade">
+            <br />
+            <div class="list-group">
+                <div class="list-group-item active">
+                    <h4 class="list-group-item-heading">Moderatorzy</h4>
+                </div>
+                @foreach (var item in Model.Moderators)
+                {
+                    <a href="@Url.Action("Details", "Profile", new { id = item.Id }, null)" id="document@(item.Id)" class="list-group-item">
+                        <h4 class="list-group-item-heading">
+                        @if (ViewBag.isAdmin == true || ViewBag.isModerator == true)
+                        {
+                                <span style="float: right; font-size: 26px; letter-spacing: 10px;">                                
+                                    <i class="fa fa-trash" aria-hidden="true" onclick="window.location = '@Url.Action("Remove", "Moderator", new { id = Model.Id, ModeratorId = item.Id }, null)'; return false;"></i>
+                                </span>
+                        }
+                            @item.Email (@item.Name @item.LastName)
+                        </h4>
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+</div>

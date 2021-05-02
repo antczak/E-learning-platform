@@ -1,0 +1,31 @@
+﻿@model E_learning_platform.Models.CategoryViewModel
+@{
+    ViewBag.Title = "Moje Kursy";
+}
+
+<h2>Moje kursy</h2>
+<div class="row">
+    @foreach (var item in Model.CourseList)
+    {
+        <div class="col-sm-6 col-md-4">
+            <div class="thumbnail">
+                <div style="width: 350px; height: 150px; overflow: hidden;">
+                    @if (item.ImagePath != null)
+                    {
+                        <img src="@Url.Content("~/Content/Uploads/")@item.ImagePath" alt="...">
+                    }
+                    else
+                    {
+                        <img src="http://placehold.it/350x150" alt="...">
+                    }
+                </div>
+                <div class="caption">
+                    <h3>@Html.DisplayFor(m => item.Name)</h3>
+                    <p>@Html.DisplayFor(m => item.Desc)</p>
+                    <p>Cena: @Html.DisplayFor(m => item.Price) zł</p>
+                    <p><a href="@Url.Action("View", "Course", new {id = item.Id})" class="btn btn-primary" role="button">Przejdź</a></p>
+                </div>
+            </div>
+        </div>
+    }
+</div>
